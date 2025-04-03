@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        language_version: python3
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.2
+    hooks:
+      - id: flake8
+        exclude: migrations
+        args: [ "--max-line-length=121", "--ignore=F405,E203,W503", "--exclude=migrations" ]
+        language_version: python3
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        args: [ "--line-length=121" ]
+        language_version: python3
+  - repo: https://github.com/adamchainz/djade-pre-commit
+    rev: "1.3.2"
+    hooks:
+      - id: djade
+        args: [ --target-version, "3.2" ]
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-reformat-django
+      - id: djlint-django

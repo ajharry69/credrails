@@ -1,0 +1,6 @@
+-r requirements.txt
+-r requirements-lint.txt
+django-debug-toolbar
+factory-boy
+pytest-django
+pytest-xdist

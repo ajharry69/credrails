@@ -1,0 +1,11 @@
+### Python template
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+
+# Unit test / coverage reports
+.pytest_cache/
+credrails/settings/local*
+public/

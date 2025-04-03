@@ -1,0 +1,6 @@
+black
+djade
+djlint
+flake8
+isort
+pre-commit
