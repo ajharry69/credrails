@@ -91,15 +91,17 @@ class TestReconciliationSerializer:
                 """record_id,name,amount,date
 1,JOHN DOE,100,2023-01-15
 2,Jane Smith,200,16/01/2023
-3,Alice Johnson,150,2023-01-17""",
+3,Alice Johnson,150,2023-01-17
+4,Jack Jill,15.0,2023-01-17""",
                 """record_id,name,amount,date
 1,John Doe,100.00,2023-01-15
 2,jane smith,200,2023-01-16
-4,Bob Williams,250,2023-01-18""",
+4,Jack Jill,150,2023-01-17
+5,Bob Williams,250,2023-01-18""",
                 {
                     "records_missing_in_source": [
                         {
-                            "record_id": "4",
+                            "record_id": "5",
                             "name": "Bob Williams",
                             "amount": "250",
                             "date": "2023-01-18",
@@ -125,6 +127,12 @@ class TestReconciliationSerializer:
                             "column_name": "name",
                             "row_number": 3,
                             "reason": "Mismatching case",
+                        },
+                        {
+                            "spreadsheet_cell_id": "C5",
+                            "column_name": "amount",
+                            "row_number": 5,
+                            "reason": "Mismatching numbers",
                         },
                     ],
                 },

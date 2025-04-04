@@ -1,5 +1,6 @@
 import codecs
 import csv
+import re
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -61,11 +62,12 @@ class ReconciliationSerializer(serializers.Serializer):
                 if target_source_data[column_name] == column_value:
                     continue
 
+                cell_id = CellId(
+                    row_number=target_source_row_number,
+                    column_number=source_column_positions[column_name],
+                )
+
                 if target_source_data[column_name].lower() == column_value.lower():
-                    cell_id = CellId(
-                        row_number=target_source_row_number,
-                        column_number=source_column_positions[column_name],
-                    )
                     discrepancies.append(
                         {
                             "spreadsheet_cell_id": str(cell_id),
@@ -74,6 +76,16 @@ class ReconciliationSerializer(serializers.Serializer):
                             "reason": "Mismatching case",
                         }
                     )
+                elif re.match(r"^\d+(\.\d+)?$", column_value):
+                    if float(target_source_data[column_name]) != float(column_value):
+                        discrepancies.append(
+                            {
+                                "spreadsheet_cell_id": str(cell_id),
+                                "column_name": column_name,
+                                "row_number": target_source_row_number,
+                                "reason": "Mismatching numbers",
+                            }
+                        )
 
         instance["records_missing_in_source"] = records_missing_in_source
         instance["records_missing_in_target"] = records_missing_in_target
