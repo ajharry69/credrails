@@ -86,6 +86,15 @@ class ReconciliationSerializer(serializers.Serializer):
                                 "reason": "Mismatching numbers",
                             }
                         )
+                else:  # assume we are looking at a date
+                    discrepancies.append(
+                        {
+                            "spreadsheet_cell_id": str(cell_id),
+                            "column_name": column_name,
+                            "row_number": target_source_row_number,
+                            "reason": "Mismatching date format",
+                        }
+                    )
 
         instance["records_missing_in_source"] = records_missing_in_source
         instance["records_missing_in_target"] = records_missing_in_target

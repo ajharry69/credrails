@@ -129,6 +129,12 @@ class TestReconciliationSerializer:
                             "reason": "Mismatching case",
                         },
                         {
+                            "spreadsheet_cell_id": "D3",
+                            "column_name": "date",
+                            "row_number": 3,
+                            "reason": "Mismatching date format",
+                        },
+                        {
                             "spreadsheet_cell_id": "C5",
                             "column_name": "amount",
                             "row_number": 5,
