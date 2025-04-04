@@ -143,6 +143,70 @@ class TestReconciliationSerializer:
                     ],
                 },
             ),
+            (
+                """record_id,name,amount,date,status
+1,John Doe,100,2023-01-15,active
+2,Jane Smith,200,2023-01-16,inactive
+3,Alice Johnson,150,2023-01-17,active""",
+                """record_id,name,amount,date,status
+1,John Doe,100,2023-01-15,ACTIVE
+2,Jane Smith,200,2023-01-16,inactive
+4,Bob Williams,250,2023-01-18,active""",
+                {
+                    "records_missing_in_source": [
+                        {
+                            "record_id": "4",
+                            "name": "Bob Williams",
+                            "amount": "250",
+                            "date": "2023-01-18",
+                            "status": "active",
+                        },
+                    ],
+                    "records_missing_in_target": [
+                        {
+                            "record_id": "3",
+                            "name": "Alice Johnson",
+                            "amount": "150",
+                            "date": "2023-01-17",
+                            "status": "active",
+                        },
+                    ],
+                    "discrepancies": [
+                        {
+                            "spreadsheet_cell_id": "E2",
+                            "column_name": "status",
+                            "row_number": 2,
+                            "reason": "Mismatching case",
+                        },
+                    ],
+                },
+            ),
+            (
+                """record_id,name,amount,date""",
+                """record_id,name,amount,date
+1,John Doe,100,2023-01-15""",
+                {
+                    "records_missing_in_source": [
+                        {
+                            "record_id": "1",
+                            "name": "John Doe",
+                            "amount": "100",
+                            "date": "2023-01-15",
+                        },
+                    ],
+                    "records_missing_in_target": [],
+                    "discrepancies": [],
+                },
+            ),
+            (
+                """record_id,name,amount,date""",
+                """record_id,name,amount,date""",
+                {
+                    "records_missing_in_source": [],
+                    "records_missing_in_target": [],
+                    "discrepancies": [],
+                },
+            ),
         ],
     )
     def test_data(self, source_content, target_content, expected):
