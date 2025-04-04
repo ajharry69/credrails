@@ -62,39 +62,27 @@ class ReconciliationSerializer(serializers.Serializer):
                 if target_source_data[column_name] == column_value:
                     continue
 
+                reason = "Mismatching date format"  # assume we are looking at a date as the last resort
+
+                if target_source_data[column_name].lower() == column_value.lower():
+                    reason = "Mismatching case"
+                elif re.match(r"^\d+(\.\d+)?$", column_value):
+                    if float(target_source_data[column_name]) == float(column_value):
+                        continue
+
+                    reason = "Mismatching numbers"
+
                 cell_id = CellId(
                     row_number=target_source_row_number,
                     column_number=source_column_positions[column_name],
                 )
-
-                if target_source_data[column_name].lower() == column_value.lower():
-                    discrepancies.append(
-                        {
-                            "spreadsheet_cell_id": str(cell_id),
-                            "column_name": column_name,
-                            "row_number": target_source_row_number,
-                            "reason": "Mismatching case",
-                        }
-                    )
-                elif re.match(r"^\d+(\.\d+)?$", column_value):
-                    if float(target_source_data[column_name]) != float(column_value):
-                        discrepancies.append(
-                            {
-                                "spreadsheet_cell_id": str(cell_id),
-                                "column_name": column_name,
-                                "row_number": target_source_row_number,
-                                "reason": "Mismatching numbers",
-                            }
-                        )
-                else:  # assume we are looking at a date
-                    discrepancies.append(
-                        {
-                            "spreadsheet_cell_id": str(cell_id),
-                            "column_name": column_name,
-                            "row_number": target_source_row_number,
-                            "reason": "Mismatching date format",
-                        }
-                    )
+                discrepancy = {
+                    "spreadsheet_cell_id": str(cell_id),
+                    "column_name": column_name,
+                    "row_number": target_source_row_number,
+                    "reason": reason,
+                }
+                discrepancies.append(discrepancy)
 
         instance["records_missing_in_source"] = records_missing_in_source
         instance["records_missing_in_target"] = records_missing_in_target
