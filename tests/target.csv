@@ -1,0 +1,5 @@
+record_id,name,amount,date
+1,John Doe,100.00,2023-01-15
+2,jane smith,200,2023-01-16
+4,Jack Jill,150,2023-01-17
+5,Bob Williams,250,2023-01-18
