@@ -1,4 +1,6 @@
 FROM python:3.10-slim
+LABEL org.opencontainers.image.source="https://github.com/ajharry69/credrails"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
