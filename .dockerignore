@@ -1,0 +1,48 @@
+# Python-specific patterns
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+
+# Development artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Version control
+.git/
+.gitignore
+
+# Environment and secrets
+.env*
+*.env
+
+# Project-specific patterns
+Dockerfile*
+*compose*
+*.md
+README*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Exclude database files
+db.sqlite3
+
+# Exclude test files
+tests/
+
+# Exclude unnecessary directories
+.github/
+
+# Exclude documentation
+LICENSE
+
+# Exclude build outputs
+dist/
+build/
+out/

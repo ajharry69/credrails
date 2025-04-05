@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        REQUIREMENTS_FILE: requirements-dev.txt
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    init: true
+    environment:
+      DJANGO_MODE: DEVELOPMENT
