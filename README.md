@@ -5,14 +5,12 @@
 [![Supported Django Versions](https://img.shields.io/badge/Django-5.2-purple)](https://www.djangoproject.com/download/)
 [![Supported Django REST Framework Versions](https://img.shields.io/badge/DRF-3.16-cyan)](https://www.django-rest-framework.org/)
 
-This is a Django app that provides REST API that handles file uploads and reconciliation processing.
+The application provides REST API that reconciles two provided CSV files — a `source` and a `target` — and generates a
+report detailing any discrepancies found. The report categorises discrepancies as:
 
-> The application takes in 2 **arbitrary** CSV (`source` and `target`) files, where the `source` will be reconciled
-> against
-> the `target`, and respond with a report of the errors encountered in the process. Errors are in 3 categories:
-> 1. Records missing in the `source` CSV, but present in the `target`.
-> 2. Records missing in the `target` CSV, but present in the `source`.
-> 3. Details of discrepancies in the records matching the `target` from the `source` CSVs.
+1. Records present in the `target` CSV but missing from the `source` CSV.
+2. Records present in the `source` CSV but missing from the `target` CSV.
+3. Specific differences in records that exist in both the `source` and `target` CSVs.
 
 ### Running with Docker
 
