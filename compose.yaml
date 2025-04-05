@@ -6,6 +6,8 @@ services:
         REQUIREMENTS_FILE: requirements-dev.txt
     ports:
       - "8000:8000"
+    volumes:
+      - "./:/app"
     restart: unless-stopped
     init: true
     environment:

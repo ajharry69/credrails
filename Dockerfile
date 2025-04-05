@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python -m venv /app/.venv
-ENV PATH="/app/.venv/bin:$PATH"
+RUN python -m venv /.venv
+ENV PATH="/.venv/bin:$PATH"
 
 COPY requirements*.txt ./
 ARG REQUIREMENTS_FILE=requirements.txt
