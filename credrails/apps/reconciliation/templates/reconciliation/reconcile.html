@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n reconciliation rest_framework %}
+
+{% block title %}
+    Reconciliation Report | {{ block.super }}
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+{% endblock styles %}
+
+{% block body %}
+    <h2>{% translate "Reconcile" %}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% render_form serializer %}
+        <input type="submit" value="{% translate "Reconcile" %}" />
+    </form>
+
+    <h2>Reconciliation Report</h2>
+    {% for category, report in reports.items %}
+        <h3>{{ category|label }}</h3>
+        <table>
+            <thead>
+                <tr>
+                    {% for column_name in report.0.keys %}<th>{{ column_name|label }}</th>{% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for content in report %}
+                    <tr>
+                        {% for key in content.keys %}<td>{{ content|value:key }}</td>{% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% empty %}
+        <div>{% translate "No reports. Please use the above form to retrieve reports." %}</div>
+    {% endfor %}
+{% endblock body %}

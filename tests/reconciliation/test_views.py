@@ -3,8 +3,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import encode_multipart
 from django.urls import reverse
 from rest_framework import status
-
 from rest_framework.test import APIClient
+
+from credrails.apps.reconciliation.serializers import ReconciliationSerializer
 
 
 class TestReconciliationViewSet:
@@ -174,7 +175,7 @@ class TestReconciliationViewSet:
             ),
         ],
     )
-    def test_reconcile(self, source_content, target_content, expected_data):
+    def test_reconcile_post(self, source_content, target_content, expected_data):
         source = self.csv_file(content=source_content)
         target = self.csv_file(content=target_content)
         path = reverse("reconciliation:reconciliation-reconcile")
@@ -182,7 +183,34 @@ class TestReconciliationViewSet:
         content = encode_multipart("BoUnDaRyStRiNg", data)
         content_type = "multipart/form-data; boundary=BoUnDaRyStRiNg"
 
-        response = self.client.post(path=path, data=content, content_type=content_type)
+        response = self.client.post(
+            path=path,
+            data=content,
+            content_type=content_type,
+        )
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data == expected_data
+
+    def test_reconcile_get_default(self):
+        path = reverse("reconciliation:reconciliation-reconcile")
+
+        response = self.client.get(path=path)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == response.json() == {}
+
+    def test_reconcile_get_html(self):
+        path = reverse("reconciliation:reconciliation-reconcile")
+
+        response = self.client.get(path=path, headers={"Accept": "text/html"})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data.keys() == {"reports", "serializer"}
+        assert response.data["reports"] == {}
+        assert isinstance(response.data["serializer"], ReconciliationSerializer)
+        assert "Source" in response.text
+        assert "Target" in response.text
+        assert "Reconcile" in response.text
+        assert "Reconciliation Report" in response.text
+        assert "No reports. Please use the above form to retrieve reports." in response.text

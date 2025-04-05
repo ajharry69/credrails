@@ -1,4 +1,5 @@
 from rest_framework.routers import SimpleRouter
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from credrails.apps.reconciliation import views
 
@@ -10,4 +11,7 @@ router.register(
 )
 
 app_name = "reconciliation"
-urlpatterns = router.urls
+urlpatterns = format_suffix_patterns(
+    urlpatterns=router.urls,
+    allowed=["json", "html", "csv", "api"],
+)
