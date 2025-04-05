@@ -3,6 +3,15 @@
 [![Pipeline](https://github.com/ajharry69/credrails/actions/workflows/pipeline.yml/badge.svg)](https://github.com/ajharry69/credrails/actions/workflows/pipeline.yml)
 [![Supported Python Versions](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/)
 [![Supported Django Versions](https://img.shields.io/badge/Django-5.2-purple)](https://www.djangoproject.com/download/)
+[![Supported Django REST Framework Versions](https://img.shields.io/badge/DRF-3.16-cyan)](https://www.django-rest-framework.org/)
+
+This is a Django app that provides REST API that handles file uploads and reconciliation processing.
+
+> The application takes in 2 **arbitrary** CSV (`source` and `target`) files, where the `source` will be reconciled against
+> the `target`, and respond with a report of the errors encountered in the process. Errors are in 3 categories:
+> 1. Records missing in the `source` CSV, but present in the `target`.
+> 2. Records missing in the `target` CSV, but present in the `source`.
+> 3. Details of discrepancies in the records matching the `target` from the `source` CSVs.
 
 ### Running with Manual Installation
 
