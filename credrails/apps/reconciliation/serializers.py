@@ -39,6 +39,10 @@ class ReconciliationSerializer(serializers.Serializer):
     def validate_target(self, value):
         return self.validate_source(value=value)
 
+    @staticmethod
+    def is_number(value):
+        return re.match(r"^\d+(\.\d+)?$", value)
+
     def to_representation(self, instance):
         discrepancies = []
         records_missing_in_source = []
@@ -60,7 +64,7 @@ class ReconciliationSerializer(serializers.Serializer):
 
                 if source_value.data[column_name].lower() == column_value.lower():
                     reason = "Mismatching case"
-                elif re.match(r"^\d+(\.\d+)?$", column_value):
+                elif self.is_number(value=column_value):
                     if float(source_value.data[column_name]) == float(column_value):
                         continue
 
