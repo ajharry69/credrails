@@ -9,6 +9,11 @@ router.register(
     views.ReconciliationViewSet,
     basename="reconciliation",
 )
+router.register(
+    "reconciliation-webhook",
+    views.ReconciliationWebhookViewSet,
+    basename="reconciliation-webhook",
+)
 
 app_name = "reconciliation"
 urlpatterns = format_suffix_patterns(

@@ -1,3 +1,5 @@
+from collections import Counter
+
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import encode_multipart
@@ -5,7 +7,62 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from credrails.apps.reconciliation.models import Reconciliation, ReconciliationStatus
 from credrails.apps.reconciliation.serializers import ReconciliationSerializer
+
+
+def frequencies(strings):
+    counter = Counter(strings)
+    return dict(counter.items())
+
+
+def test_string_frequencies():
+    assert {"A": 2, "B": 1} == frequencies(["A", "A", "B"])
+
+
+@pytest.mark.django_db
+class TestReconciliationWebhookViewSet:
+    def setup_method(self):
+        self.client = APIClient()
+        self.reconciliation = Reconciliation.objects.create()
+
+    def test_should_return_404(self):
+        path = reverse("reconciliation:reconciliation-webhook-list")
+
+        data = {
+            "Type": "Notification",
+            "MessageId": "test-message-id",
+            "TopicArn": "arn:aws:sns:eu-west-1:123456789012:etl-file-processing-status",
+            "Message": {
+                "details": {"upload_id": self.reconciliation.id + 1000},
+                "status": "SUCCESS",
+                "step": "cleaning",
+            },
+            "Timestamp": "2024-01-20T12:00:00.000Z",
+            "SignatureVersion": "1",
+            "Signature": "test-signature",
+        }
+        response = self.client.post(path=path, data=data)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_should_update_reconciliation_status(self):
+        path = reverse("reconciliation:reconciliation-webhook-list")
+
+        data = {
+            "Type": "Notification",
+            "MessageId": "test-message-id",
+            "TopicArn": "arn:aws:sns:eu-west-1:123456789012:etl-file-processing-status",
+            "Message": {"details": {"upload_id": self.reconciliation.id}, "status": "SUCCESS", "step": "cleaning"},
+            "Timestamp": "2024-01-20T12:00:00.000Z",
+            "SignatureVersion": "1",
+            "Signature": "test-signature",
+        }
+        response = self.client.post(path=path, data=data)
+
+        assert response.status_code == status.HTTP_200_OK
+        self.reconciliation.refresh_from_db()
+        assert self.reconciliation.status == ReconciliationStatus.SUCCESS
 
 
 class TestReconciliationViewSet:
@@ -17,6 +74,7 @@ class TestReconciliationViewSet:
                 content=content.encode("utf-8"),
                 content_type="text/csv",
             )
+        return None
 
     def setup_method(self):
         self.client = APIClient()

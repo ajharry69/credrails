@@ -1,9 +1,21 @@
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
-from rest_framework import response, viewsets, parsers, renderers
+from rest_framework import response, viewsets, parsers, renderers, mixins
 from rest_framework.decorators import action
 from rest_framework_csv.renderers import CSVRenderer
 
+from credrails.apps.reconciliation.models import Reconciliation
 from credrails.apps.reconciliation.serializers import ReconciliationSerializer
+
+
+class ReconciliationWebhookViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    def create(self, request, *args, **kwargs):
+        message = request.data["Message"]
+        upload_id = message["details"]["upload_id"]
+        reconciliation: Reconciliation = get_object_or_404(Reconciliation, pk=upload_id)
+        reconciliation.status = message["status"]
+        reconciliation.save(update_fields=["status"])
+        return response.Response()
 
 
 class ReconciliationViewSet(viewsets.GenericViewSet):
